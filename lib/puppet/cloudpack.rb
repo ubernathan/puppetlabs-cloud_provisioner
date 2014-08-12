@@ -752,14 +752,15 @@ module Puppet::CloudPack
       hsh = {}
       servers.each do |s|
         hsh[s.id] = {
-          "id"         => s.id,
-          "state"      => s.state,
-          "keyname"    => s.key_name,
-          "dns_name"   => s.private_dns_name,
-          "priv_ip"    => s.private_ip_address,
-          "pub_ip"    => s.ip_address,
-          "created_at" => s.created_at,
-          "tags"       => s.tags.inspect
+          "id"            => s.id,
+          "state"         => s.state,
+          "keyname"       => s.key_name,
+          "dns_name"      => s.dns_name,
+          "public_ip"     => s.ip_address,
+          "priv_dns_name" => s.private_dns_name,
+          "priv_ip"       => s.private_ip_address,
+          "created_at"    => s.created_at,
+          "tags"          => s.tags.inspect
         }
       end
       hsh
