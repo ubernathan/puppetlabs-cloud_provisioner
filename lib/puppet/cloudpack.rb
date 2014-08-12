@@ -715,18 +715,20 @@ module Puppet::CloudPack
       # This is the earliest point we have knowledge of the DNS name
       # Use private IP if VPC subnet was elected, else public is fine
       if options[:subnet] != nil then
+        sName = server.private_dns_name
         Puppet.notice("Server #{server.id} Private DNS name: #{server.private_dns_name}")
         Puppet.notice("Server #{server.id} Private IP: #{server.private_ip_address}")
       else
+        sName = server.dns_name
         Puppet.notice("Server #{server.id} Public DNS name: #{server.dns_name}")
-        Puppet.notice("Server #{server.id} Public IP: #{server.ip_address}")
+        Puppet.notice("Server #{server.id} Public IP: #{server.public_ip_address}")
       end
 
       if options[:_destroy_server_at_exit] == :create
         options.delete(:_destroy_server_at_exit)
       end
 
-      return server.dns_name
+      return "Provisioning of #{sName} is now complete."
     end
 
     def list_keynames(options = {})
@@ -756,7 +758,7 @@ module Puppet::CloudPack
           "state"         => s.state,
           "keyname"       => s.key_name,
           "dns_name"      => s.dns_name,
-          "public_ip"     => s.ip_address,
+          "public_ip"     => s.public_ip_address,
           "priv_dns_name" => s.private_dns_name,
           "priv_ip"       => s.private_ip_address,
           "created_at"    => s.created_at,
