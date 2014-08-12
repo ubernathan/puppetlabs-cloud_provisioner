@@ -560,6 +560,14 @@ module Puppet::CloudPack
         EOT
         default_to { false }
       end
+      
+      action.option '--variables' do
+        summary 'Custom variables to be injected into node\'s site.pp'
+        description <<-'EOT'
+          Comma seperated variables specified here will be put into the instance's site.pp
+        EOT
+        default_to { nil }
+      end
     end
 
     def bootstrap(options)
