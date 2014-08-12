@@ -708,8 +708,19 @@ module Puppet::CloudPack
         return nil
       end
 
+      # Wait 10 seconds to allow IP/DNS establishment
+      Puppet.notice("Server #{server.id} initialising...")
+      sleep(10)
+
       # This is the earliest point we have knowledge of the DNS name
-      Puppet.notice("Server #{server.id} public dns name: #{server.dns_name}")
+      # Use private IP if VPC subnet was elected, else public is fine
+      if options[:subnet] != nil then
+        Puppet.notice("Server #{server.id} Private DNS name: #{server.private_dns_name}")
+        Puppet.notice("Server #{server.id} Private IP: #{server.private_ip_address}")
+      else
+        Puppet.notice("Server #{server.id} Public DNS name: #{server.dns_name}")
+        Puppet.notice("Server #{server.id} Public IP: #{server.ip_address}")
+      end
 
       if options[:_destroy_server_at_exit] == :create
         options.delete(:_destroy_server_at_exit)
@@ -744,7 +755,9 @@ module Puppet::CloudPack
           "id"         => s.id,
           "state"      => s.state,
           "keyname"    => s.key_name,
-          "dns_name"   => s.dns_name,
+          "dns_name"   => s.private_dns_name,
+          "priv_ip"    => s.private_ip_address,
+          "pub_ip"    => s.ip_address,
           "created_at" => s.created_at,
           "tags"       => s.tags.inspect
         }
