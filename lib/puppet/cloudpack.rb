@@ -838,7 +838,8 @@ module Puppet::CloudPack
       # for the installer script matching puppet-enterprise-* (e.g. puppet-enterprise-s3)
       connections = ssh_connect(server, options[:login], options[:keyfile])
 
-      options[:tmp_dir] = File.join('/', 'tmp', Guid.new.to_s)
+      # Fix - Small tmp size on ec2 instances, use homedir instead
+      options[:tmp_dir] = File.join('/', 'home', 'ec2-user', Guid.new.to_s)
       create_tmpdir_cmd = "bash -c 'umask 077; mkdir #{options[:tmp_dir]}'"
       ssh_remote_execute(server, options[:login], create_tmpdir_cmd, options[:keyfile])
 
@@ -862,7 +863,8 @@ module Puppet::CloudPack
       # install script returned with a zero exit code.
 
       # Determine the certificate name as reported by the remote system.
-      certname_command = "#{cmd_prefix}puppet agent --configprint certname"
+      # Fix - no sudo for this command
+      certname_command = "puppet agent --configprint certname"
       results = ssh_remote_execute(server, options[:login], certname_command, options[:keyfile])
 
       if results[:exit_code] == 0 then
